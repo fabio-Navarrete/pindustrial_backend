@@ -1,9 +1,9 @@
-const express = require("express");
+ire("express");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3000;
 const connectDB = require("./database");
-const Hero = require("./hero");
+const Hero = require("./product");
 
 //Conectar a la base de datos
 connectDB();
@@ -12,7 +12,7 @@ connectDB();
 app.use(
   cors({
     origin: [
-      //"http://127.0.0.1:5500",
+      "http://127.0.0.1:5500",
       "https://github.com/fabio-Navarrete/pindustrial_backend.git",
       //"https://front-heroes-api.vercel.app",
     ],
@@ -33,21 +33,21 @@ app.get("/", (req, res) => {
 });
 
 // Obtener todos los héroes
-app.get("/tienda", async (req, res) => {
+app.get("/product", async (req, res) => {
   try {
-    const heroes = await Hero.find();
+    const product = await Hero.find();
     res.json(heroes);
   } catch (error) {
-    res.status(500).send("Error al obtener la lista de tienda");
+    res.status(500).send("Error al obtener la lista de productos");
   }
 });
 
 // Obtener un héroe por ID
-app.get("/tienda/:id", async (req, res) => {
+app.get("/product/:id", async (req, res) => {
   try {
     const hero= await Hero.findById(req.params.id)
     if (!hero)
-      return res.status(404).send("El elemento en la tienda no fue encontrado");
+      return res.status(404).send("El producto en la tienda no fue encontrado");
     res.json(hero);
   } catch (error) {
     res.status(500).send("Error al buscar el elemento en tienda");
@@ -55,7 +55,7 @@ app.get("/tienda/:id", async (req, res) => {
 });
 
 // Crear un nuevo héroe
-app.post("/tienda", async (req, res) => {
+app.post("/product", async (req, res) => {
   const { name, image } = req.body;
 
   // validacion de campos
@@ -70,7 +70,7 @@ app.post("/tienda", async (req, res) => {
     return res
       .status(400)
       .send(
-        "El nombre y la imagen son campos obligatorios, no pueden ir vacios"
+        "todos los campos son obligatorios, no pueden ir vacios"
       );
   }
 
@@ -79,12 +79,12 @@ app.post("/tienda", async (req, res) => {
     await newHero.save();
     res.status(201).json(newHero);
   } catch (error) {
-    res.status(500).send("Error crear elemento");
+    res.status(500).send("Error crear producto");
   }
 });
 
 // Actualizar un héroe existente
-app.put("/tienda/:id", async (req, res) => {
+app.put("/product/:id", async (req, res) => {
   const { name, image } = req.body;
 
   // validacion de campos
@@ -105,7 +105,7 @@ app.put("/tienda/:id", async (req, res) => {
 
   try {
     const updatedHero = await Hero.findByIdAndUpdate(req.params.id, {name, image}, {new:true})
-    if (!updatedHero) return res.status(404).send("El elemento en la tienda no fue encontrado");
+    if (!updatedHero) return res.status(404).send("El producto en la tienda no fue encontrado");
     res.status(201).json(updatedHero);
   } catch (error) {
     res.status(500).send("Error al actualizar tienda");
@@ -114,11 +114,11 @@ app.put("/tienda/:id", async (req, res) => {
 
 
 // Eliminar un objeto
-app.delete("/tienda/:id", async(req, res) => {
+app.delete("/product/:id", async(req, res) => {
   try {
     const deletedHero = await Hero.findByIdAndDelete(req.params.id)
-    if (!deletedHero) return res.status(404).send("El elemento en la tienda no fue encontrado");
-    res.status(201).json({ message: "elemento en la tienda fue eliminado"});
+    if (!deletedHero) return res.status(404).send("El producto en la tienda no fue encontrado");
+    res.status(201).json({ message: "El producto en la tienda fue eliminado"});
   } catch (error) {
     res.status(500).send("Error al actualizar tienda");
   }
